@@ -1,24 +1,24 @@
 const express = require('express');
 const Subscriptions = require('../models/subscriptionsModel');
+const subController=require('../controllers/subscriptionController')
 const router = express.Router()
 
-module.exports = router;
 
-router.post('/sub', async (req, res) => {
-    const subs = new Subscriptions({
-        title: req.body.title,
-        status: req.body.status,
-        price: req.body.price,
-        articleCountPerMonth: req.body.articleCountPerMonth
-    })
-    try{
-        const dataToSave= await subs.save();
-        res.status(200).json(dataToSave)
-    }
-    catch(error){
-        res.status(400).json({message: error.message})
-    }
-})
+// router.post('/sub', async (req, res) => {
+//     const subs = new Subscriptions({
+//         title: req.body.title,
+//         status: req.body.status,
+//         price: req.body.price,
+//         articleCountPerMonth: req.body.articleCountPerMonth
+//     })
+//     try{
+//         const dataToSave= await subs.save();
+//         res.status(200).json(dataToSave)
+//     }
+//     catch(error){
+//         res.status(400).json({message: error.message})
+//     }
+// })
 
 router.get('/sub/all', async (req, res) => {
     try{
@@ -67,3 +67,8 @@ router.delete('/sub/:id', async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 })
+
+
+router.post('/sub', subController.addSubscription);
+
+module.exports = router;

@@ -23,4 +23,13 @@ const subscriptions=new mongoose.Schema({
     versionKey:false
 });
 
+subscriptions.methods.toSubscriptionResponse=function () {
+    return{
+        title : this.title,
+        status : this.status,
+        price : this.price,
+        articleCountPerMonth : this.articleCountPerMonth        
+    }
+};
+
 module.exports = mongoose.model('Subscriptions', subscriptions)
