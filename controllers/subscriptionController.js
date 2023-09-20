@@ -33,6 +33,38 @@ const addSubscription=asyncHandler(async(req,res)=>{
     }
 });
 
+
+const updateSubscription=asyncHandler(async(req,res)=>{
+    const { subscription }=req.body;
+    const id = req.params.id;
+    const title = req.body.title;
+    const status = req.body.status;
+    const price = req.body.price;
+    const articleCountPerMonth = req.body.articleCountPerMonth;
+
+    const change=await Subscription.findOne({ title }).exec();
+
+    if (title){
+        change.title=subscription.title;
+    }
+    if (status){
+        change.status=status;
+    }
+    if (price){
+        change.price=price;
+    }
+    if (articleCountPerMonth){
+        change.articleCountPerMonth=articleCountPerMonth;
+    }
+
+    await change.save();
+
+    return res.status(200).json({
+        subscription:change.toSubscriptionResponse()
+    });
+});
+
 module.exports = {
-    addSubscription
+    addSubscription,
+    updateSubscription
 }

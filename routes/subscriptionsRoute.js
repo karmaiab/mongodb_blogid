@@ -71,4 +71,6 @@ router.delete('/sub/:id', async (req, res) => {
 
 router.post('/sub', subController.addSubscription);
 
+router.put('/sub/:id',subController.updateSubscription);
+
 module.exports = router;
