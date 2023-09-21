@@ -35,17 +35,15 @@ const addSubscription=asyncHandler(async(req,res)=>{
 
 
 const updateSubscription=asyncHandler(async(req,res)=>{
-    const { subscription }=req.body;
-    const id = req.params.id;
     const title = req.body.title;
     const status = req.body.status;
     const price = req.body.price;
     const articleCountPerMonth = req.body.articleCountPerMonth;
 
-    const change=await Subscription.findOne({ title }).exec();
+    const change=await Subscription.findById(req.params.id).exec();
 
     if (title){
-        change.title=subscription.title;
+        change.title=title;
     }
     if (status){
         change.status=status;
@@ -64,7 +62,29 @@ const updateSubscription=asyncHandler(async(req,res)=>{
     });
 });
 
+const deleteSubscription=asyncHandler(async(req,res)=>{
+    const deleted=await Subscription.findByIdAndDelete(req.params.id);
+    res.send(`Subscription "${deleted.title}" has been deleted..`)
+});
+
+const AllSubscriptions=asyncHandler(async(req,res)=>{
+    const data = await Subscription.find();
+    return res.status(200).json({
+        subscription:data
+    });
+});
+
+const subById=asyncHandler(async(req,res)=>{
+    const data = await Subscription.findById(req.params.id);
+    return res.status(200).json({
+        subscription:data
+    });
+});
+
 module.exports = {
     addSubscription,
-    updateSubscription
+    updateSubscription,
+    deleteSubscription,
+    AllSubscriptions,
+    subById
 }

@@ -20,57 +20,63 @@ const router = express.Router()
 //     }
 // })
 
-router.get('/sub/all', async (req, res) => {
-    try{
-        const data = await Subscriptions.find();
-        res.json(data)
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+// router.get('/sub/all', async (req, res) => {
+//     try{
+//         const data = await Subscriptions.find();
+//         res.json(data)
+//     }
+//     catch(error){
+//         res.status(500).json({message: error.message})
+//     }
+// })
 
-router.get('/sub/:id', async (req, res) => {
-    try{
-        const data = await Subscriptions.findById(req.params.id);
-        res.json(data)
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+// router.get('/sub/:id', async (req, res) => {
+//     try{
+//         const data = await Subscriptions.findById(req.params.id);
+//         res.json(data)
+//     }
+//     catch(error){
+//         res.status(500).json({message: error.message})
+//     }
+// })
 
-router.patch('/sub/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        const updatedData = req.body;
-        const options = { new: true };
+// router.patch('/sub/:id', async (req, res) => {
+//     try {
+//         const id = req.params.id;
+//         const updatedData = req.body;
+//         const options = { new: true };
 
-        const result = await Subscriptions.findByIdAndUpdate(
-            id, updatedData, options
-        )
+//         const result = await Subscriptions.findByIdAndUpdate(
+//             id, updatedData, options
+//         )
 
-        res.send(result)
-    }
-    catch (error) {
-        res.status(400).json({ message: error.message })
-    }
-})
+//         res.send(result)
+//     }
+//     catch (error) {
+//         res.status(400).json({ message: error.message })
+//     }
+// })
 
-router.delete('/sub/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        const data = await Subscriptions.findByIdAndDelete(id)
-        res.send(`Subscription "${data.title}" has been deleted..`)
-    }
-    catch (error) {
-        res.status(400).json({ message: error.message })
-    }
-})
+// router.delete('/sub/:id', async (req, res) => {
+//     try {
+//         const id = req.params.id;
+//         const data = await Subscriptions.findByIdAndDelete(id)
+//         res.send(`Subscription "${data.title}" has been deleted..`)
+//     }
+//     catch (error) {
+//         res.status(400).json({ message: error.message })
+//     }
+// })
 
 
 router.post('/sub', subController.addSubscription);
 
 router.put('/sub/:id',subController.updateSubscription);
+
+router.delete('/sub/:id',subController.deleteSubscription);
+
+router.get('/sub/all',subController.AllSubscriptions);
+
+router.get('/sub/:id',subController.subById);
 
 module.exports = router;
