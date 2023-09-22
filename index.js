@@ -1,4 +1,4 @@
-require('dotenv').config({path:"./env/.env"});
+require('dotenv').config();
 
 const routes = require('./routes/subscriptionsRoute');
 
@@ -19,9 +19,9 @@ database.once('connected', () => {
 const app = express();
 app.use(express.json());
 
-app.use('/api', routes)
+app.use('/api', routes);
 
-
+app.use('/api', require('./routes/userRoute'));
 
 app.listen(3000, () => {
     console.log(`Server Started at ${3000}`)

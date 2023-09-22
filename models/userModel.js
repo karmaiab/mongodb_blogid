@@ -27,20 +27,21 @@ const users=new mongoose.Schema({
         default:"https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png"
     },
     subscription:{
-        type:DBRef,
-        ref:"subscriptions"
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"subscriptions",
+        default:null
     },
     subscriptionExpirationDate:{
         type:Date,
-        default: new Date(ISODate().setDate(ISODate().getDate() +31)),
+        default: () => new Date(Date.now()+31*24*60*60*1000),
     },
     subscriptionStartDate:{
         type:Date,
-        default: new ISODate
+        default: Date.now
     }
 },
 {
-    timestamps:true,
+    timestamps:false,
     versionKey:false
 });
 
@@ -62,11 +63,14 @@ users.methods.toUserResponse = function() {
     return {
         username: this.username,
         email: this.email,
-        bio: this.bio,
-        image: this.image,
+        password:this.password,
+        bio:this.bio,
+        image:this.image,
         subscription:this.subscription,
         subscriptionExpirationDate:this.subscriptionExpirationDate,
         subscriptionStartDate:this.subscriptionStartDate,
         token: this.generateAccessToken()
     }
 };
+
+module.exports = mongoose.model('Users', users)
