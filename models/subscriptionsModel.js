@@ -32,4 +32,13 @@ subscriptions.methods.toSubscriptionResponse=function () {
     }
 };
 
+subscriptions.methods.toSubscriptionJSON = function () {
+    return{
+        title : this.title,
+        status : this.status,
+        price : this.price,
+        articleCountPerMonth : this.articleCountPerMonth        
+    }
+};
+
 module.exports = mongoose.model('Subscriptions', subscriptions)

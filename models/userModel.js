@@ -1,5 +1,6 @@
 const mongoose=require('mongoose');
 const jwt = require("jsonwebtoken");
+const Subscription = require('./subscriptionsModel');
 
 const users=new mongoose.Schema({
     email:{
@@ -59,14 +60,15 @@ users.methods.generateAccessToken = function() {
     return accessToken;
 }
 
-users.methods.toUserResponse = function() {
+users.methods.toUserResponse = async function() {
+    const subObj=await Subscription.findById(this.subscription).exec();
     return {
         username: this.username,
         email: this.email,
         password:this.password,
         bio:this.bio,
         image:this.image,
-        subscription:this.subscription,
+        subscription:subObj.toSubscriptionJSON(),
         subscriptionExpirationDate:this.subscriptionExpirationDate,
         subscriptionStartDate:this.subscriptionStartDate,
         token: this.generateAccessToken()
