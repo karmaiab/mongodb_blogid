@@ -63,6 +63,36 @@ const allUsers=asyncHandler(async(req,res)=>{
     });
 });
 
+const followUser=asyncHandler(async(req,res)=>{
+    const data = await User.findById(req.params.id).exec();
+
+})
+
+const loginUser=asyncHandler(async(req,res)=>{
+    const email=req.body.email
+    const password=req.body.password
+
+    if(!email || !password){
+        return res.status(400).json({message:"Все поля должны быть заполнены!"})
+    }
+
+    const loginUser=await User.findOne({email}).exec();
+
+    if(!loginUser){
+        return res.status(404).json({message:"Пользователь не найден!"})
+    }
+
+    const match =await bcrypt.compare(password,loginUser.password);
+
+    if(!match){
+        return res.status(401).json({message:"Ошибка авторизации: Неправильный пароль"})
+    }
+
+    res.status(200).json({
+        user:await loginUser.toUserResponse()
+    });
+})
+
 const updateUser=asyncHandler(async(req,res)=>{
     const username = req.body.username;
     const email = req.body.email;
@@ -94,5 +124,6 @@ module.exports={
     regUser,
     findUser,
     allUsers,
-    updateUser
+    updateUser,
+    loginUser
 }
