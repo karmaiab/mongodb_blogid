@@ -39,7 +39,15 @@ const users=new mongoose.Schema({
     subscriptionStartDate:{
         type:Date,
         default: Date.now
-    }
+    },
+    followingUsers:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    }],
+    followedUsers:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    }]
 },
 {
     timestamps:false,
@@ -62,6 +70,7 @@ users.methods.generateAccessToken = function() {
 
 users.methods.toUserResponse = async function() {
     const subObj=await Subscription.findById(this.subscription).exec();
+    const token=this.generateAccessToken()
     return {
         username: this.username,
         email: this.email,
@@ -71,8 +80,30 @@ users.methods.toUserResponse = async function() {
         subscription:subObj.toSubscriptionJSON(),
         subscriptionExpirationDate:this.subscriptionExpirationDate,
         subscriptionStartDate:this.subscriptionStartDate,
-        token: this.generateAccessToken()
+        token: token
     }
+};
+
+users.methods.toUserResponseAuth = async function(token) {
+    const subObj=await Subscription.findById(this.subscription).exec();
+    return {
+        username: this.username,
+        email: this.email,
+        password:this.password,
+        bio:this.bio,
+        image:this.image,
+        subscription:subObj.toSubscriptionJSON(),
+        subscriptionExpirationDate:this.subscriptionExpirationDate,
+        subscriptionStartDate:this.subscriptionStartDate,
+        token:token
+    }
+};
+
+users.methods.follow = function (id) {
+    if(this.followingUsers.indexOf(id) === -1){
+        this.followingUsers.push(id);
+    }
+    return this.save();
 };
 
 module.exports = mongoose.model('Users', users)

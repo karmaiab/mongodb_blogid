@@ -4,7 +4,6 @@ const verifyJWT = (req, res, next) => {
     const authHeader = req.headers.authorization || req.headers.Authorization
     console.log(req.headers)
     if (!authHeader?.startsWith('Token ')) {
-        res.setHeader('WWW-Authenticate', 'Token ');
         return res.status(401).json({ message: 'Не авторизован' })
     }
 

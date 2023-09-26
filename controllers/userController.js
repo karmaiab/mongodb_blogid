@@ -13,9 +13,7 @@ const regUser=asyncHandler(async (req,res)=>{
     if(!email || !username || ! password){
         return res.status(400).json({message:"Все поля должны быть заполнены!"});
     }
-
-    const hashedPass=await bcrypt.hash(password,10);
-
+        const hashedPass=await bcrypt.hash(password,10);
     const userObject={
         "email":email,
         "username":username,
@@ -40,14 +38,17 @@ const regUser=asyncHandler(async (req,res)=>{
 
 
 const findUser=asyncHandler(async(req,res)=>{
-    const data = await User.findById(req.params.id).exec();
-    if(!data){
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    const token = authHeader.split(' ')[1];
+    const email = req.userEmail;
+    const user = await User.findOne({ email }).exec();
+    if(!user){
         return res.status(400).json({
             message:"Пользователь не найден!"
         });
     }
     return res.status(200).json({
-        user:await data.toUserResponse()
+        user:await user.toUserResponseAuth(token)
     });
 });
 
@@ -71,7 +72,6 @@ const followUser=asyncHandler(async(req,res)=>{
 const loginUser=asyncHandler(async(req,res)=>{
     const email=req.body.email
     const password=req.body.password
-
     if(!email || !password){
         return res.status(400).json({message:"Все поля должны быть заполнены!"})
     }
@@ -87,6 +87,7 @@ const loginUser=asyncHandler(async(req,res)=>{
     if(!match){
         return res.status(401).json({message:"Ошибка авторизации: Неправильный пароль"})
     }
+    
 
     res.status(200).json({
         user:await loginUser.toUserResponse()
@@ -98,6 +99,8 @@ const updateUser=asyncHandler(async(req,res)=>{
     const email = req.body.email;
     const bio = req.body.bio;
     const image = req.body.image;
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    const token = authHeader.split(' ')[1];
 
     const change=await User.findById(req.params.id).exec();
 
@@ -117,9 +120,11 @@ const updateUser=asyncHandler(async(req,res)=>{
     await change.save();
 
     return res.status(200).json({
-        user:await change.toUserResponse()
+        user:await change.toUserResponseAuth(token)
     });
 })
+
+
 module.exports={
     regUser,
     findUser,
