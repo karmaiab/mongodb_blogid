@@ -37,7 +37,7 @@ const regUser=asyncHandler(async (req,res)=>{
 });
 
 
-const findUser=asyncHandler(async(req,res)=>{
+const currentUser=asyncHandler(async(req,res)=>{
     const authHeader = req.headers.authorization || req.headers.Authorization
     const token = authHeader.split(' ')[1];
     const email = req.userEmail;
@@ -64,10 +64,6 @@ const allUsers=asyncHandler(async(req,res)=>{
     });
 });
 
-const followUser=asyncHandler(async(req,res)=>{
-    const data = await User.findById(req.params.id).exec();
-
-})
 
 const loginUser=asyncHandler(async(req,res)=>{
     const email=req.body.email
@@ -127,7 +123,7 @@ const updateUser=asyncHandler(async(req,res)=>{
 
 module.exports={
     regUser,
-    findUser,
+    currentUser,
     allUsers,
     updateUser,
     loginUser

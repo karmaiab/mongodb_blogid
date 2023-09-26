@@ -7,11 +7,14 @@ router.post('/user', userController.regUser);
 
 router.get('/user/all', userController.allUsers);
 
-router.get('/user/current', verifyJWT, userController.findUser);
+router.get('/user/current', verifyJWT, userController.currentUser);
 
 router.put('/user/:id', userController.updateUser);
 
 router.post('/user/login',userController.loginUser);
+
+router.post('/:id/follow', verifyJWT, userController.followUser);
+
 
 
 module.exports = router;

@@ -25,6 +25,10 @@ app.use('/api', routes);
 
 app.use('/api', require('./routes/userRoute'));
 
+app.use('/api/profile', require('./routes/profileRoute'));
+
+app.use('/api', require('./routes/articleRoute'));
+
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {

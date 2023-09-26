@@ -99,11 +99,52 @@ users.methods.toUserResponseAuth = async function(token) {
     }
 };
 
+users.methods.toUserJSON = async function() {
+    const subObj=await Subscription.findById(this.subscription).exec();
+    return {
+        username: this.username,
+        email: this.email,
+        password:this.password,
+        bio:this.bio,
+        image:this.image,
+        subscription:subObj.toSubscriptionJSON(),
+        subscriptionExpirationDate:this.subscriptionExpirationDate,
+        subscriptionStartDate:this.subscriptionStartDate
+    }
+};
+
 users.methods.follow = function (id) {
     if(this.followingUsers.indexOf(id) === -1){
         this.followingUsers.push(id);
     }
     return this.save();
 };
+
+users.methods.addFollower = function (id) {
+    if(this.followedUsers.indexOf(id) === -1){
+        this.followedUsers.push(id);
+    }
+    return this.save();
+};
+
+users.methods.toProfileJSON = function (user) {
+    return {
+        username: this.username,
+        bio: this.bio,
+        image: this.image,
+        following: user ? user.isFollowing(this._id) : false
+    }
+};
+
+users.methods.isFollowing = function (id) {
+    const idStr = id.toString();
+    for (const followingUser of this.followingUsers) {
+        if (followingUser.toString() === idStr) {
+            return true;
+        }
+    }
+    return false;
+};
+
 
 module.exports = mongoose.model('Users', users)
