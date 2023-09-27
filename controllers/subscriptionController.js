@@ -1,4 +1,5 @@
 const Subscription=require('../models/subscriptionsModel');
+const User=require("../models/userModel");
 const asyncHandler=require('express-async-handler');
 
 const addSubscription=asyncHandler(async(req,res)=>{
@@ -81,10 +82,31 @@ const subById=asyncHandler(async(req,res)=>{
     });
 });
 
+const obtainSubscription=asyncHandler(async(req,res)=>{
+    const loginUser = await User.findOne({email:req.userEmail}).exec();
+    const subscription = await Subscription.findById(req.params.id)
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    const token = authHeader.split(' ')[1];
+    if(subscription.status==="Monthly"){
+        loginUser.subscriptionStartDate=Date.now()
+        loginUser.subscriptionExpirationDate=new Date(Date.now()+31*24*60*60*1000)
+    }
+    if(subscription.status==="Yearly"){
+        loginUser.subscriptionStartDate=Date.now()
+        loginUser.subscriptionExpirationDate=new Date(Date.now()+365*24*60*60*1000)
+    }
+    loginUser.subscription=subscription._id
+    await loginUser.save();
+    return res.status(200).json({
+        user:await loginUser.toUserResponseAuth(token)
+    });
+})
+
 module.exports = {
     addSubscription,
     updateSubscription,
     deleteSubscription,
     AllSubscriptions,
-    subById
+    subById,
+    obtainSubscription
 }

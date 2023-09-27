@@ -40,13 +40,20 @@ const users=new mongoose.Schema({
         type:Date,
         default:""
     },
+    likedArticles:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'articles',
+        default:null
+    }],
     followingUsers:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
+        default:null
     }],
     followedUsers:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
+        default:null
     }]
 },
 {
@@ -160,6 +167,28 @@ users.methods.isFollowing = function (id) {
     }
     return false;
 };
+
+users.methods.like = function (id) {
+    if(this.likedArticles.indexOf(id) === -1){
+        this.likedArticles.push(id);
+    }
+    return this.save();
+}
+users.methods.unLike = function (id) {
+    if(this.likedArticles.indexOf(id) === -1){
+        this.likedArticles.remove(id);
+    }
+    return this.save();
+}
+users.methods.isLiked = function (id) {
+    const idStr = id.toString();
+    for (const article of this.likedArticles) {
+        if (article.toString() === idStr) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 module.exports = mongoose.model('Users', users)

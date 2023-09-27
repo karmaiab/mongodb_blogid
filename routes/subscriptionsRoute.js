@@ -12,6 +12,8 @@ router.delete('/sub/:id',verifyJWT,subController.deleteSubscription);
 
 router.get('/sub/all',verifyJWT,subController.AllSubscriptions);
 
+router.put('/sub/all/:id/subscribe',verifyJWT,subController.obtainSubscription);
+
 router.get('/sub/:id',verifyJWT,subController.subById);
 
 module.exports = router;

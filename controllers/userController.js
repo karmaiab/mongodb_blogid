@@ -8,7 +8,6 @@ const regUser=asyncHandler(async (req,res)=>{
     const username=req.body.username;
     const password=req.body.password;
     const id=req.body.subscription;
-    const subscription=await Subscription.findById(id).exec();
 
     if(!email || !username || ! password){
         return res.status(400).json({message:"Все поля должны быть заполнены!"});
@@ -18,7 +17,6 @@ const regUser=asyncHandler(async (req,res)=>{
         "email":email,
         "username":username,
         "password":hashedPass,
-        "subscription":subscription._id
     };
 
     const createdUser= await User.create(userObject);
@@ -129,7 +127,6 @@ const updatePassword=asyncHandler(async(req,res)=>{
         return res.status(400).json({message:"Все поля должны быть заполнены!"})
     }
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    console.log(loginUser)
     if(!loginUser){
         return res.status(404).json({message:"Пользователь не найден!"})
     }
@@ -148,25 +145,6 @@ const updatePassword=asyncHandler(async(req,res)=>{
     });
 })
 
-const obtainSubscription=asyncHandler(async(req,res)=>{
-    const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const subscription = await Subscription.findById(req.params.id)
-    const authHeader = req.headers.authorization || req.headers.Authorization
-    const token = authHeader.split(' ')[1];
-    if(subscription.status==="Monthly"){
-        loginUser.subscriptionStartDate=Date.now()
-        loginUser.subscriptionExpirationDate=() => new Date(Date.now()+31*24*60*60*1000)
-    }
-    if(subscription.status==="Yearly"){
-        loginUser.subscriptionStartDate=Date.now()
-        loginUser.subscriptionExpirationDate=() => new Date(Date.now()+365*24*60*60*1000)
-    }
-    loginUser.subscription=subscription._id
-    await loginUser.save();
-    return res.status(200).json({
-        user:await loginUser.toUserResponseAuth(token)
-    });
-})
 
 module.exports={
     regUser,
@@ -174,6 +152,5 @@ module.exports={
     allUsers,
     updateUser,
     loginUser,
-    updatePassword,
-    obtainSubscription
+    updatePassword
 }

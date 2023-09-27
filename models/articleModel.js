@@ -1,9 +1,9 @@
 const mongoose=require('mongoose');
 const User = require('./userModel');
+const slugify = require('slugify');
 
 const articles = new mongoose.Schema({
     slug: {
-        required: true,
         type: String,
         lowercase: true,
         unique: true,
@@ -28,7 +28,7 @@ const articles = new mongoose.Schema({
     }],
     likes: {
         type: Number,
-        default: null
+        default: 0
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -41,8 +41,12 @@ const articles = new mongoose.Schema({
     versionKey:false
 })
 
+articles.pre('save', function(next){
+    this.slug = slugify(this.title, { lower: true, replacement: '-'});
+    next();
+});
 
-articles.methods.toArticleResponse = async function(){
+articles.methods.toArticleResponse = async function(user){
     const authorObj = await User.findById(this.author).exec();
     return{
         slug: this.slug,
@@ -51,7 +55,10 @@ articles.methods.toArticleResponse = async function(){
         body: this.body,
         tagList: this.tagList,
         likes: this.likes,
-        author: await authorObj.toUserJSON()
+        favorited: user ? user.isLiked(this._id) : false,
+        author: await authorObj.toUserJSON(),
+        createdAt:this.createdAt,
+        updatedAt:this.updatedAt
     }
 }
 

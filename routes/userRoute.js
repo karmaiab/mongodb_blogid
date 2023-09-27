@@ -15,6 +15,5 @@ router.post('/user/login',userController.loginUser);
 
 router.put('/user/up/password',verifyJWT,userController.updatePassword);
 
-router.put('/user/subscriptions/:id/subscribe',verifyJWT,userController.obtainSubscription);
 
 module.exports = router;
