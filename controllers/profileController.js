@@ -18,8 +18,27 @@ const followUser=asyncHandler(async(req,res)=>{
     return res.status(200).json({
         profile: user.toProfileJSON(loginUser)
     })
-})
+});
+
+const unfollowUser=asyncHandler(async(req,res)=>{
+    const loginUser = await User.findOne({email:req.userEmail}).exec();
+    const user = await User.findById(req.params.id)
+    console.log(loginUser)
+    console.log(user)
+    if(!user || !loginUser){
+        return res.status(404).json({
+            message:"Пользователь не найден!"
+        })
+    }
+    await loginUser.unfollow(user._id)
+    await user.deleteFollower(loginUser._id)
+
+    return res.status(200).json({
+        profile: user.toProfileJSON(loginUser)
+    })
+});
 
 module.exports={
-    followUser
+    followUser,
+    unfollowUser
 }

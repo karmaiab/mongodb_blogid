@@ -13,7 +13,7 @@ const regUser=asyncHandler(async (req,res)=>{
     if(!email || !username || ! password){
         return res.status(400).json({message:"Все поля должны быть заполнены!"});
     }
-        const hashedPass=await bcrypt.hash(password,10);
+    const hashedPass=await bcrypt.hash(password,10);
     const userObject={
         "email":email,
         "username":username,
@@ -120,11 +120,60 @@ const updateUser=asyncHandler(async(req,res)=>{
     });
 })
 
+const updatePassword=asyncHandler(async(req,res)=>{
+    const oldPassword=req.body.oldPassword
+    const newPassword=req.body.newPassword
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    const token = authHeader.split(' ')[1];
+    if(!oldPassword || !newPassword){
+        return res.status(400).json({message:"Все поля должны быть заполнены!"})
+    }
+    const loginUser = await User.findOne({email:req.userEmail}).exec();
+    console.log(loginUser)
+    if(!loginUser){
+        return res.status(404).json({message:"Пользователь не найден!"})
+    }
+
+    const match =await bcrypt.compare(oldPassword,loginUser.password);
+
+    if(!match){
+        return res.status(401).json({message:"Ошибка обновления пароля: Неправильный пароль"})
+    }
+    const hashedPass=await bcrypt.hash(newPassword,10);
+    loginUser.password=hashedPass
+    await loginUser.save();
+
+    return res.status(200).json({
+        user:await loginUser.toUserResponseAuth(token)
+    });
+})
+
+const obtainSubscription=asyncHandler(async(req,res)=>{
+    const loginUser = await User.findOne({email:req.userEmail}).exec();
+    const subscription = await Subscription.findById(req.params.id)
+    const authHeader = req.headers.authorization || req.headers.Authorization
+    const token = authHeader.split(' ')[1];
+    if(subscription.status==="Monthly"){
+        loginUser.subscriptionStartDate=Date.now()
+        loginUser.subscriptionExpirationDate=() => new Date(Date.now()+31*24*60*60*1000)
+    }
+    if(subscription.status==="Yearly"){
+        loginUser.subscriptionStartDate=Date.now()
+        loginUser.subscriptionExpirationDate=() => new Date(Date.now()+365*24*60*60*1000)
+    }
+    loginUser.subscription=subscription._id
+    await loginUser.save();
+    return res.status(200).json({
+        user:await loginUser.toUserResponseAuth(token)
+    });
+})
 
 module.exports={
     regUser,
     currentUser,
     allUsers,
     updateUser,
-    loginUser
+    loginUser,
+    updatePassword,
+    obtainSubscription
 }

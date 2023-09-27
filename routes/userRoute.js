@@ -13,8 +13,8 @@ router.put('/user/:id', userController.updateUser);
 
 router.post('/user/login',userController.loginUser);
 
-router.post('/:id/follow', verifyJWT, userController.followUser);
+router.put('/user/up/password',verifyJWT,userController.updatePassword);
 
-
+router.put('/user/subscriptions/:id/subscribe',verifyJWT,userController.obtainSubscription);
 
 module.exports = router;

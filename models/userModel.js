@@ -34,11 +34,11 @@ const users=new mongoose.Schema({
     },
     subscriptionExpirationDate:{
         type:Date,
-        default: () => new Date(Date.now()+31*24*60*60*1000),
+        default:"",
     },
     subscriptionStartDate:{
         type:Date,
-        default: Date.now
+        default:""
     },
     followingUsers:[{
         type: mongoose.Schema.Types.ObjectId,
@@ -126,6 +126,21 @@ users.methods.addFollower = function (id) {
     }
     return this.save();
 };
+
+users.methods.unfollow = function (id) {
+    if(this.followingUsers.indexOf(id) !== -1){
+        this.followingUsers.remove(id);
+    }
+    return this.save();
+};
+
+users.methods.deleteFollower = function (id) {
+    if(this.followedUsers.indexOf(id) !== -1){
+        this.followedUsers.remove(id);
+    }
+    return this.save();
+};
+
 
 users.methods.toProfileJSON = function (user) {
     return {
