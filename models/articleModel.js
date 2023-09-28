@@ -34,7 +34,11 @@ const articles = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         default: null
-    }
+    },
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }]
 },
 {
     timestamps:true,
@@ -61,5 +65,20 @@ articles.methods.toArticleResponse = async function(user){
         updatedAt:this.updatedAt
     }
 }
+
+articles.methods.addComment = function (commentId) {
+    if(this.comments.indexOf(commentId) === -1){
+        this.comments.push(commentId);
+    }
+    return this.save();
+};
+
+articles.methods.deleteComment = function (commentId) {
+    if(this.comments.indexOf(commentId) !== -1){
+        this.comments.delete(commentId);
+    }
+    return this.save();
+};
+
 
 module.exports = mongoose.model("Articles", articles);

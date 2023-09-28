@@ -76,6 +76,17 @@ users.methods.generateAccessToken = function() {
 }
 
 users.methods.toUserResponse = async function() {
+    if (this.subscription==null) {
+        const token=this.generateAccessToken()
+        return {
+            username: this.username,
+            email: this.email,
+            password:this.password,
+            bio:this.bio,
+            image:this.image,
+            token: token
+        }
+    }
     const subObj=await Subscription.findById(this.subscription).exec();
     const token=this.generateAccessToken()
     return {
@@ -91,6 +102,7 @@ users.methods.toUserResponse = async function() {
     }
 };
 
+
 users.methods.toUserResponseAuth = async function(token) {
     const subObj=await Subscription.findById(this.subscription).exec();
     return {
@@ -103,6 +115,16 @@ users.methods.toUserResponseAuth = async function(token) {
         subscriptionExpirationDate:this.subscriptionExpirationDate,
         subscriptionStartDate:this.subscriptionStartDate,
         token:token
+    }
+};
+
+users.methods.toUserResponseAuthSub = async function() {
+    const subObj=await Subscription.findById(this.subscription).exec();
+    return {
+        username: this.username,
+        subscription:subObj.toSubscriptionJSON(),
+        subscriptionExpirationDate:this.subscriptionExpirationDate,
+        subscriptionStartDate:this.subscriptionStartDate,
     }
 };
 
@@ -175,7 +197,7 @@ users.methods.like = function (id) {
     return this.save();
 }
 users.methods.unLike = function (id) {
-    if(this.likedArticles.indexOf(id) === -1){
+    if(this.likedArticles.indexOf(id) !== -1){
         this.likedArticles.remove(id);
     }
     return this.save();

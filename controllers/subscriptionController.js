@@ -65,7 +65,7 @@ const updateSubscription=asyncHandler(async(req,res)=>{
 
 const deleteSubscription=asyncHandler(async(req,res)=>{
     const deleted=await Subscription.findByIdAndDelete(req.params.id);
-    res.send(`Subscription "${deleted.title}" has been deleted..`)
+    res.send(`Подписка "${deleted.title}" была удалена!`)
 });
 
 const AllSubscriptions=asyncHandler(async(req,res)=>{
@@ -98,7 +98,7 @@ const obtainSubscription=asyncHandler(async(req,res)=>{
     loginUser.subscription=subscription._id
     await loginUser.save();
     return res.status(200).json({
-        user:await loginUser.toUserResponseAuth(token)
+        user:await loginUser.toUserResponseAuthSub(token)
     });
 })
 

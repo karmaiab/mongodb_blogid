@@ -11,4 +11,10 @@ router.post('/article',verifyJWT, articleController.createArticle);
 
 router.put('/article/all/:id/like',verifyJWT, articleController.likeArticle);
 
+router.put('/article/all/:id/unlike',verifyJWT, articleController.unlikeArticle);
+
+router.put('/article/:id/update',verifyJWT, articleController.updateArticle);
+
+router.delete('/article/:id/delete',verifyJWT, articleController.deleteArticle);
+
 module.exports = router;

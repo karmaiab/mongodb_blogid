@@ -1,5 +1,4 @@
 const express = require('express');
-const Subscriptions = require('../models/subscriptionsModel');
 const subController=require('../controllers/subscriptionController');
 const verifyJWT = require('../middleware/verifyJWT');
 const router = express.Router()
