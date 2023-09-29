@@ -9,7 +9,7 @@ router.get('/user/all', userController.allUsers);
 
 router.get('/user/current', verifyJWT, userController.currentUser);
 
-router.put('/user/:id', userController.updateUser);
+router.put('/user/update', verifyJWT,userController.updateUser);
 
 router.post('/user/login',userController.loginUser);
 

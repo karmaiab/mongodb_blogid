@@ -41,7 +41,7 @@ const updateSubscription=asyncHandler(async(req,res)=>{
     const price = req.body.price;
     const articleCountPerMonth = req.body.articleCountPerMonth;
 
-    const change=await Subscription.findById(req.params.id).exec();
+    const change=await Subscription.findOne(req.params.title).exec();
 
     if (title){
         change.title=title;
@@ -64,7 +64,8 @@ const updateSubscription=asyncHandler(async(req,res)=>{
 });
 
 const deleteSubscription=asyncHandler(async(req,res)=>{
-    const deleted=await Subscription.findByIdAndDelete(req.params.id);
+    const sub=await Subscription.findByOne(req.params.title);
+    const deleted=await Subscription.findByIdAndRemove(sub._id);
     res.send(`Подписка "${deleted.title}" была удалена!`)
 });
 
@@ -76,7 +77,7 @@ const AllSubscriptions=asyncHandler(async(req,res)=>{
 });
 
 const subById=asyncHandler(async(req,res)=>{
-    const data = await Subscription.findById(req.params.id);
+    const data = await Subscription.findOne(req.params.title);
     return res.status(200).json({
         subscription:data
     });
@@ -84,7 +85,7 @@ const subById=asyncHandler(async(req,res)=>{
 
 const obtainSubscription=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const subscription = await Subscription.findById(req.params.id)
+    const subscription = await Subscription.findOne(req.params.title)
     const authHeader = req.headers.authorization || req.headers.Authorization
     const token = authHeader.split(' ')[1];
     if(subscription.status==="Monthly"){
@@ -95,6 +96,7 @@ const obtainSubscription=asyncHandler(async(req,res)=>{
         loginUser.subscriptionStartDate=Date.now()
         loginUser.subscriptionExpirationDate=new Date(Date.now()+365*24*60*60*1000)
     }
+    loginUser.remainingViews=subscription.articleCountPerMonth
     loginUser.subscription=subscription._id
     await loginUser.save();
     return res.status(200).json({

@@ -36,8 +36,6 @@ const regUser=asyncHandler(async (req,res)=>{
 
 
 const currentUser=asyncHandler(async(req,res)=>{
-    const authHeader = req.headers.authorization || req.headers.Authorization
-    const token = authHeader.split(' ')[1];
     const email = req.userEmail;
     const user = await User.findOne({ email }).exec();
     if(!user){
@@ -46,7 +44,7 @@ const currentUser=asyncHandler(async(req,res)=>{
         });
     }
     return res.status(200).json({
-        user:await user.toUserResponseAuth(token)
+        user:await user.toUserResponseAuth()
     });
 });
 
@@ -89,14 +87,13 @@ const loginUser=asyncHandler(async(req,res)=>{
 })
 
 const updateUser=asyncHandler(async(req,res)=>{
+    const loginUser = await User.findOne({email:req.userEmail}).exec();
     const username = req.body.username;
     const email = req.body.email;
     const bio = req.body.bio;
     const image = req.body.image;
-    const authHeader = req.headers.authorization || req.headers.Authorization
-    const token = authHeader.split(' ')[1];
-
-    const change=await User.findById(req.params.id).exec();
+    
+    const change=await User.findById(loginUser._id).exec();
 
     if (username){
         change.username=username;
@@ -114,7 +111,7 @@ const updateUser=asyncHandler(async(req,res)=>{
     await change.save();
 
     return res.status(200).json({
-        user:await change.toUserResponseAuth(token)
+        user:await change.toUserResponseAuth()
     });
 })
 
@@ -141,7 +138,7 @@ const updatePassword=asyncHandler(async(req,res)=>{
     await loginUser.save();
 
     return res.status(200).json({
-        user:await loginUser.toUserResponseAuth(token)
+        user:await loginUser.toUserResponseAuth()
     });
 })
 

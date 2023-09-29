@@ -54,7 +54,11 @@ const users=new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         default:null
-    }]
+    }],
+    remainingViews:{
+        type:Number,
+        default:null
+    }
 },
 {
     timestamps:false,
@@ -103,7 +107,17 @@ users.methods.toUserResponse = async function() {
 };
 
 
-users.methods.toUserResponseAuth = async function(token) {
+users.methods.toUserResponseAuth = async function() {
+    if (this.subscription==null) {
+        const subObj=await Subscription.findById(this.subscription).exec();
+        return {
+            username: this.username,
+            email: this.email,
+            password:this.password,
+            bio:this.bio,
+            image:this.image
+        }
+    }
     const subObj=await Subscription.findById(this.subscription).exec();
     return {
         username: this.username,
@@ -113,8 +127,7 @@ users.methods.toUserResponseAuth = async function(token) {
         image:this.image,
         subscription:subObj.toSubscriptionJSON(),
         subscriptionExpirationDate:this.subscriptionExpirationDate,
-        subscriptionStartDate:this.subscriptionStartDate,
-        token:token
+        subscriptionStartDate:this.subscriptionStartDate
     }
 };
 

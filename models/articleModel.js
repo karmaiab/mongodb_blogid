@@ -50,7 +50,7 @@ articles.pre('save', function(next){
     next();
 });
 
-articles.methods.toArticleResponse = async function(user){
+articles.methods.toArticleResponse = async function(){
     const authorObj = await User.findById(this.author).exec();
     return{
         slug: this.slug,
@@ -59,7 +59,6 @@ articles.methods.toArticleResponse = async function(user){
         body: this.body,
         tagList: this.tagList,
         likes: this.likes,
-        favorited: user ? user.isLiked(this._id) : false,
         author: await authorObj.toUserJSON(),
         createdAt:this.createdAt,
         updatedAt:this.updatedAt

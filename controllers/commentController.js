@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 
 const addCommentToArticle=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const article = await Article.findById(req.params.id)
+    const article = await Article.findOne(req.params.slug)
     const body=req.body.body
 
     if (!article) {
@@ -28,7 +28,7 @@ const addCommentToArticle=asyncHandler(async(req,res)=>{
 })
 
 const getComments=asyncHandler(async(req,res)=>{
-    const article = await Article.findById(req.params.id)
+    const article = await Article.findOne(req.params.slug)
     const loginUser = await User.findOne({email:req.userEmail}).exec();
 
     if (!article) {
@@ -47,13 +47,13 @@ const getComments=asyncHandler(async(req,res)=>{
 
 const deleteComment=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const article = await Article.findById(req.params.id)
+    const article = await Article.findOne(req.params.slug)
     if(!article.author.equals(loginUser._id)){
         return res.status(401).json({
             message:"Отсутствуют права!"
         })
     }
-    const comment = await Comment.findById(req.params.comid).exec();
+    const comment = await Comment.findById(req.params.id).exec();
     await Comment.deleteOne({_id:comment._id})
 
     if (!article) {

@@ -4,8 +4,8 @@ const verifyJWT = require('../middleware/verifyJWT');
 const router = express.Router()
 
 
-router.post('/:id/follow', verifyJWT, profileController.followUser);
+router.post('/:username/follow', verifyJWT, profileController.followUser);
 
-router.post('/:id/unfollow', verifyJWT, profileController.unfollowUser);
+router.post('/:username/unfollow', verifyJWT, profileController.unfollowUser);
 
 module.exports = router;

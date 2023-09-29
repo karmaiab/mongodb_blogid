@@ -4,7 +4,7 @@ const asyncHandler=require('express-async-handler');
 
 const followUser=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const user = await User.findById(req.params.id)
+    const user = await User.findOne(req.params.username)
     if(!user || !loginUser){
         return res.status(404).json({
             message:"Пользователь не найден!"
@@ -20,7 +20,7 @@ const followUser=asyncHandler(async(req,res)=>{
 
 const unfollowUser=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const user = await User.findById(req.params.id)
+    const user = await User.findOne(req.params.username)
     if(!user || !loginUser){
         return res.status(404).json({
             message:"Пользователь не найден!"
