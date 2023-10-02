@@ -28,6 +28,8 @@ app.use('/api', require('./routes/articleRoute'));
 
 app.use('/api/article', require('./routes/commentRoute'));
 
+app.use('/api/tags', require('./routes/tagRoute'));
+
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {

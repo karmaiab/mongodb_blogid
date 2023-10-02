@@ -72,7 +72,7 @@ const createArticle = asyncHandler(async(req,res)=>{
 
 const likeArticle=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const article = await Article.findOne(req.params.slug)
+    const article = await Article.findOne(req.params)
     if(!article){
         return res.status(404).json({
             message:"Статья не найдена!"
@@ -92,7 +92,7 @@ const likeArticle=asyncHandler(async(req,res)=>{
 
 const unlikeArticle=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const article = await Article.findOne(req.params.slug)
+    const article = await Article.findOne(req.params)
     if(!article){
         return res.status(404).json({
             message:"Статья не найдена!"
@@ -112,7 +112,7 @@ const unlikeArticle=asyncHandler(async(req,res)=>{
 
 const updateArticle=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const article = await Article.findOne(req.params.slug)
+    const article = await Article.findOne(req.params)
     if(!article.author.equals(loginUser._id)){
         return res.status(401).json({
             message:"Отсутствуют права!"
@@ -143,11 +143,15 @@ const updateArticle=asyncHandler(async(req,res)=>{
 
 const deleteArticle=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const article = await Article.findOne(req.params.slug)
+    const article = await Article.findOne(req.params)
     if(!article.author.equals(loginUser._id)){
         return res.status(401).json({
             message:"Отсутствуют права!"
         })
+    }
+    const users = await User.find()
+    for (let i = 0; i < users.length; i++) {
+        await users[i].deleteArticle(article._id)
     }
     await Article.findByIdAndDelete(article._id)
     res.send(`Статья "${article.title}" была удалена!`)

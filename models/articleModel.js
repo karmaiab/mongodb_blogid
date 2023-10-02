@@ -74,7 +74,7 @@ articles.methods.addComment = function (commentId) {
 
 articles.methods.deleteComment = function (commentId) {
     if(this.comments.indexOf(commentId) !== -1){
-        this.comments.delete(commentId);
+        this.comments.remove(commentId);
     }
     return this.save();
 };

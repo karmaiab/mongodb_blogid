@@ -4,7 +4,12 @@ const asyncHandler=require('express-async-handler');
 
 const followUser=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const user = await User.findOne(req.params.username)
+    const user = await User.findOne(req.params)
+    if(loginUser._id.equals(user._id)){
+        return res.status(400).json({
+            message:"Вы не можете подписаться на самого себя!"
+        })
+    }
     if(!user || !loginUser){
         return res.status(404).json({
             message:"Пользователь не найден!"
@@ -20,7 +25,7 @@ const followUser=asyncHandler(async(req,res)=>{
 
 const unfollowUser=asyncHandler(async(req,res)=>{
     const loginUser = await User.findOne({email:req.userEmail}).exec();
-    const user = await User.findOne(req.params.username)
+    const user = await User.findOne(req.params)
     if(!user || !loginUser){
         return res.status(404).json({
             message:"Пользователь не найден!"

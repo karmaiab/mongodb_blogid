@@ -109,7 +109,6 @@ users.methods.toUserResponse = async function() {
 
 users.methods.toUserResponseAuth = async function() {
     if (this.subscription==null) {
-        const subObj=await Subscription.findById(this.subscription).exec();
         return {
             username: this.username,
             email: this.email,
@@ -210,6 +209,12 @@ users.methods.like = function (id) {
     return this.save();
 }
 users.methods.unLike = function (id) {
+    if(this.likedArticles.indexOf(id) !== -1){
+        this.likedArticles.remove(id);
+    }
+    return this.save();
+}
+users.methods.deleteArticle = function (id) {
     if(this.likedArticles.indexOf(id) !== -1){
         this.likedArticles.remove(id);
     }
