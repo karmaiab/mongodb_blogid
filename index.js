@@ -6,6 +6,8 @@ const routes = require('./routes/subscriptionsRoute');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const mongoose = require('mongoose');
+const swaggerUi=require('swagger-ui-express');
+const swaggerDocument=require('./swagger/swagger.json');
 
 connectDB();
 
@@ -22,13 +24,16 @@ app.use('/api', routes);
 
 app.use('/api', require('./routes/userRoute'));
 
-app.use('/api/profile', require('./routes/profileRoute'));
+app.use('/api', require('./routes/profileRoute'));
 
 app.use('/api', require('./routes/articleRoute'));
 
-app.use('/api/article', require('./routes/commentRoute'));
+app.use('/api', require('./routes/commentRoute'));
 
-app.use('/api/tags', require('./routes/tagRoute'));
+app.use('/api', require('./routes/tagRoute'));
+
+app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
 
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');

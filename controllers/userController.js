@@ -7,7 +7,6 @@ const regUser=asyncHandler(async (req,res)=>{
     const email=req.body.email;
     const username=req.body.username;
     const password=req.body.password;
-    const id=req.body.subscription;
 
     if(!email || !username || ! password){
         return res.status(400).json({message:"Все поля должны быть заполнены!"});
@@ -64,6 +63,7 @@ const allUsers=asyncHandler(async(req,res)=>{
 const loginUser=asyncHandler(async(req,res)=>{
     const email=req.body.email
     const password=req.body.password
+    
     if(!email || !password){
         return res.status(400).json({message:"Все поля должны быть заполнены!"})
     }
@@ -118,8 +118,6 @@ const updateUser=asyncHandler(async(req,res)=>{
 const updatePassword=asyncHandler(async(req,res)=>{
     const oldPassword=req.body.oldPassword
     const newPassword=req.body.newPassword
-    const authHeader = req.headers.authorization || req.headers.Authorization
-    const token = authHeader.split(' ')[1];
     if(!oldPassword || !newPassword){
         return res.status(400).json({message:"Все поля должны быть заполнены!"})
     }
