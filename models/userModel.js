@@ -81,8 +81,31 @@ users.methods.generateAccessToken = function() {
 
 users.methods.toUserResponse = async function() {
     if (this.subscription==null) {
+        return {
+            username: this.username,
+            email: this.email,
+            bio:this.bio,
+            image:this.image,
+        }
+    }
+    const subObj=await Subscription.findById(this.subscription).exec();
+    return {
+        username: this.username,
+        email: this.email,
+        bio:this.bio,
+        image:this.image,
+        subscription:subObj.toSubscriptionJSON(),
+        subscriptionExpirationDate:this.subscriptionExpirationDate,
+        subscriptionStartDate:this.subscriptionStartDate,
+    }
+};
+
+
+users.methods.toUserResponseAuth = async function() {
+    if (this.subscription==null) {
         const token=this.generateAccessToken()
         return {
+            
             username: this.username,
             email: this.email,
             password:this.password,
@@ -106,30 +129,6 @@ users.methods.toUserResponse = async function() {
     }
 };
 
-
-users.methods.toUserResponseAuth = async function() {
-    if (this.subscription==null) {
-        return {
-            username: this.username,
-            email: this.email,
-            password:this.password,
-            bio:this.bio,
-            image:this.image
-        }
-    }
-    const subObj=await Subscription.findById(this.subscription).exec();
-    return {
-        username: this.username,
-        email: this.email,
-        password:this.password,
-        bio:this.bio,
-        image:this.image,
-        subscription:subObj.toSubscriptionJSON(),
-        subscriptionExpirationDate:this.subscriptionExpirationDate,
-        subscriptionStartDate:this.subscriptionStartDate
-    }
-};
-
 users.methods.toUserResponseAuthSub = async function() {
     const subObj=await Subscription.findById(this.subscription).exec();
     return {
@@ -137,20 +136,15 @@ users.methods.toUserResponseAuthSub = async function() {
         subscription:subObj.toSubscriptionJSON(),
         subscriptionExpirationDate:this.subscriptionExpirationDate,
         subscriptionStartDate:this.subscriptionStartDate,
+        remainingViews:this.remainingViews
     }
 };
 
 users.methods.toUserJSON = async function() {
-    const subObj=await Subscription.findById(this.subscription).exec();
     return {
         username: this.username,
-        email: this.email,
-        password:this.password,
         bio:this.bio,
         image:this.image,
-        subscription:subObj.toSubscriptionJSON(),
-        subscriptionExpirationDate:this.subscriptionExpirationDate,
-        subscriptionStartDate:this.subscriptionStartDate
     }
 };
 

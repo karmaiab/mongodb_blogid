@@ -82,7 +82,7 @@ const loginUser=asyncHandler(async(req,res)=>{
     
 
     res.status(200).json({
-        user:await loginUser.toUserResponse()
+        user:await loginUser.toUserResponseAuth()
     });
 })
 

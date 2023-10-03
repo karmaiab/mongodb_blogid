@@ -19,7 +19,7 @@ const allArticle = asyncHandler(async(req, res) => {
 const articleBySlug = asyncHandler(async(req, res) => {
     const loginUser = await User.findOne({email:req.userEmail}).exec();
     const article = await Article.findOne(req.params).exec();
-    if(loginUser.remainingViews==0){
+    if(loginUser.remainingViews==0 || loginUser.remainingViews==null){
         return res.status(422).json({
             message: "Просмотры закончились!"
         });
